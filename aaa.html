@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Grafico Volt</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body {
+    font-family: Arial;
+    text-align: center;
+    background: #f5f5f5;
+}
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin: 10px;
+}
+canvas {
+    max-width: 90%;
+    background: white;
+    border: 1px solid #ccc;
+}
+</style>
+</head>
+<body>
+
+<h2>Inserimento valori (Volt)</h2>
+<button onclick="inserisciValori()">Inserisci valori</button>
+<button onclick="scaricaPNG()">Scarica PNG</button>
+
+<br><br>
+<canvas id="grafico"></canvas>
+
+<script>
+let tempi = [];
+let valori = [];
+let chart = null;
+
+for (let i = 0; i <= 105; i += 5) {
+    tempi.push(i);
+}
+
+function inserisciValori() {
+    valori = [];
+
+    for (let i = 0; i < tempi.length; i++) {
+        let v = prompt("Inserisci valore per tempo " + tempi[i]);
+        
+        if (v === null || v === "" || isNaN(v)) {
+            alert("Valore non valido, riprova");
+            i--;
+            continue;
+        }
+
+        valori.push(Number(v));
+    }
+
+    creaGrafico();
+}
+
+function creaGrafico() {
+    const ctx = document.getElementById('grafico').getContext('2d');
+
+    if (chart) {
+        chart.destroy();
+    }
+
+    chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: tempi,
+            datasets: [{
+                label: 'Volt',
+                data: valori,
+                borderWidth: 2,
+                fill: false,
+                tension: 0.2
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Tempo'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Volt'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function scaricaPNG() {
+    if (!chart) {
+        alert("Prima crea il grafico!");
+        return;
+    }
+
+    const link = document.createElement('a');
+    link.download = 'grafico_volt.png';
+    link.href = document.getElementById('grafico').toDataURL();
+    link.click();
+}
+</script>
+
+</body>
+</html>
