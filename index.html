@@ -24,8 +24,9 @@ canvas {
 </head>
 <body>
 
-<h2>Inserimento valori (Volt)</h2>
-<button onclick="inserisciValori()">Inserisci valori</button>
+<h2>Grafico Tempo vs Volt</h2>
+
+<button onclick="avvia()">Inserisci dati</button>
 <button onclick="scaricaPNG()">Scarica PNG</button>
 
 <br><br>
@@ -36,16 +37,31 @@ let tempi = [];
 let valori = [];
 let chart = null;
 
-for (let i = 0; i <= 105; i += 5) {
-    tempi.push(i);
-}
+function avvia() {
+    let fine = prompt("Inserisci tempo finale (multiplo di 5)");
 
-function inserisciValori() {
+    if (fine === null || fine === "" || isNaN(fine) || fine <= 0) {
+        alert("Tempo non valido");
+        return;
+    }
+
+    fine = Number(fine);
+
+    if (fine % 5 !== 0) {
+        alert("Deve essere multiplo di 5!");
+        return;
+    }
+
+    tempi = [];
     valori = [];
 
+    for (let i = 0; i <= fine; i += 5) {
+        tempi.push(i);
+    }
+
     for (let i = 0; i < tempi.length; i++) {
-        let v = prompt("Inserisci valore per tempo " + tempi[i]);
-        
+        let v = prompt("Inserisci volt al tempo " + tempi[i]);
+
         if (v === null || v === "" || isNaN(v)) {
             alert("Valore non valido, riprova");
             i--;
@@ -61,9 +77,7 @@ function inserisciValori() {
 function creaGrafico() {
     const ctx = document.getElementById('grafico').getContext('2d');
 
-    if (chart) {
-        chart.destroy();
-    }
+    if (chart) chart.destroy();
 
     chart = new Chart(ctx, {
         type: 'line',
